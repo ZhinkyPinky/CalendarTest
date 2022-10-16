@@ -6,17 +6,20 @@ public class CalendarV2 {
     LocalDate[] vacationDays = new LocalDate[20];
     HashMap<LocalDate, Work> calendarDates = new HashMap<>();
 
-    //If empty spot reduce daysToShuffle by 1?
     public CalendarV2 addWork(Work work) {
         int daysToAdd = work.days;
-        int daysToShuffle = daysToAdd;
+        int daysToShuffleForward = daysToAdd;
         int startDate = work.StartDate.getDayOfYear();
 
         for (int i = 0; i < daysToAdd; i++) {
+            /*If the date where the new work is getting added already contains something the content that is already there needs
+              to be shuffled forward x days decided by the daysToShuffleForward variable.*/
             if (calendarDates.get(LocalDate.ofYearDay(LocalDate.now().getYear(), startDate + i)) != null)
-                shuffleForward(startDate + i, daysToShuffle);
-            else daysToShuffle--;
+                shuffleForward(startDate + i, daysToShuffleForward);
+            else daysToShuffleForward--;/*If the spot where new work is being added is free all future work that needs to be
+            shuffled forward should be shuffled forward one day less.*/
 
+            //Add work to the specified date.
             calendarDates.put(LocalDate.ofYearDay(LocalDate.now().getYear(), startDate + i), work);
         }
 
@@ -24,17 +27,12 @@ public class CalendarV2 {
     }
 
     public void shuffleForward(int date, int daysToShuffle) {
+        /*If the date where the work-object is trying to get shuffled to is already taken, the work-object
+        that is already there should be shuffled forward one day.*/
         if (calendarDates.containsKey(LocalDate.ofYearDay(LocalDate.now().getYear(), date + daysToShuffle)))
             shuffleForward((date) + daysToShuffle, 1);
 
-        /*
-        System.out.println(LocalDate.ofYearDay(LocalDate.now().getYear(), date));
-        System.out.println(
-                calendarDates.get(LocalDate.ofYearDay(LocalDate.now().getYear(), date)).name + ", " +
-                        calendarDates.get(LocalDate.ofYearDay(LocalDate.now().getYear(), date)).StartDate + ", " +
-                        calendarDates.get(LocalDate.ofYearDay(LocalDate.now().getYear(), date)).days);
-
-         */
+        /*If the date is free the work-object that is getting shuffled forward can be added. */
         calendarDates.put(
                 LocalDate.ofYearDay(LocalDate.now().getYear(), date + daysToShuffle),
                 calendarDates.get(LocalDate.ofYearDay(LocalDate.now().getYear(), date)));
