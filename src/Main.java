@@ -11,9 +11,7 @@ public class Main {
         Work roof = new Work("Tak", LocalDate.of(2022, 5, 22), 2);
 
         calendar.addWork(windows)
-                .addWork(door)
-                .addWork(fence)
-                .addWork(roof);
+                .addWork(door);
 
 
         int year = LocalDate.now().getYear();
