@@ -13,6 +13,10 @@ public class Main {
         calendar.addWork(windows)
                 .addWork(door);
 
+        printCalendarV2(calendar);
+        System.out.println();
+
+        calendar.removeWork(door);
 
         int year = LocalDate.now().getYear();
         int month = 0;
@@ -31,9 +35,15 @@ public class Main {
          */
 
         //CalendarV2
+        printCalendarV2(calendar);
+    }
+
+    private static void printCalendarV2(CalendarV2 calendar) {
         for (Map.Entry<LocalDate, Work> entry : calendar.calendarDates.entrySet()) {
             System.out.print(entry.getKey() + " : ");
             System.out.println(entry.getValue().name + ", " + entry.getValue().StartDate + ", " + entry.getValue().days);
         }
     }
+
+
 }

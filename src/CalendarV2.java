@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class CalendarV2 {
     LocalDate[] vacationDays = new LocalDate[20];
@@ -35,10 +37,55 @@ public class CalendarV2 {
         LocalDate newDate = LocalDate.ofYearDay(LocalDate.now().getYear(), dayOfYear + daysToShuffle);
         /*If the date where the work-object is trying to get shuffled to is already taken, the work-object
         that is already there should be shuffled forward one day.*/
-        if (calendarDates.containsKey(newDate)) shuffleForward((dayOfYear) + daysToShuffle, 1);
+        if (calendarDates.containsKey(newDate)) shuffleForward(dayOfYear + daysToShuffle, 1);
 
         /*If the date is free the work-object that is getting shuffled forward can be added. */
         calendarDates.put(newDate, calendarDates.get(oldDate));
+    }
+
+    public void removeWork(Work work) {
+        LocalDate startDateOfRemoved = work.StartDate;
+
+        calendarDates.entrySet().removeIf(item -> item.getValue() == work);
+
+        /*
+        Iterator<Map.Entry<LocalDate, Work>> iterator = calendarDates.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<LocalDate, Work> item = iterator.next();
+            LocalDate key = item.getKey();
+            if (key.isAfter(startDateOfRemoved)) {
+                moveCalendarItemBackwards(key);
+            }
+        }
+         */
+
+        for (int i = 0; i < calendarDates.size(); i++) {
+            LocalDate date = startDateOfRemoved.plusDays(i);
+            if (calendarDates.containsKey(date)) {
+                moveCalendarItemBackwards(date);
+
+                //if (calendarDates.containsKey(date)) System.out.println(date + ": " + calendarDates.get(date).name);
+            }
+        }
+
+    }
+
+    public void moveCalendarItemBackwards(LocalDate date) {
+        LocalDate dateToMove = date;
+        LocalDate newDate = date.minusDays(Long.parseLong("1"));
+
+        while (!calendarDates.containsKey(newDate)) {
+
+            /*
+            System.out.println("oldDate: " + dateToMove);
+            System.out.println("newDate: " + newDate);
+             */
+            calendarDates.put(newDate, calendarDates.get(dateToMove));
+            calendarDates.remove(dateToMove);
+
+            dateToMove = newDate;
+            newDate = newDate.minusDays(Long.parseLong("1"));
+        }
     }
 }
 
