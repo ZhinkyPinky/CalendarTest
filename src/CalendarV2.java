@@ -1,3 +1,4 @@
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,43 +43,16 @@ public class CalendarV2 {
     }
 
     public void removeWork(Work work) {
-        LocalDate startDateOfRemoved = work.StartDate;
-
         calendarDates.entrySet().removeIf(item -> item.getValue() == work);
-
-        /*
-        Iterator<Map.Entry<LocalDate, Work>> iterator = calendarDates.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<LocalDate, Work> item = iterator.next();
-            LocalDate key = item.getKey();
-            if (key.isAfter(startDateOfRemoved)) {
-                moveCalendarItemBackwards(key);
-            }
-        }
-         */
 
         LocalDate[] lastDateMovedTo = {LocalDate.MIN};
         calendarDates.keySet().stream().sorted().forEach(date -> {
             if (date.isAfter(work.StartDate)) {
                 lastDateMovedTo[0] = moveCalendarItemBackwards(calendarDates.get(date), date, lastDateMovedTo[0]);
-                //System.out.println(lastDateMovedTo[0]);
             }
         });
 
-        //for (LocalDate key : keys) System.out.println(key);
-
         System.out.println();
-
-        /*
-        for (int i = 0; i < calendarDates.size(); i++) {
-            LocalDate date = startDateOfRemoved.plusDays(i);
-            if (calendarDates.containsKey(date)) {
-                moveCalendarItemBackwards(date);
-
-                //if (calendarDates.containsKey(date)) System.out.println(date + ": " + calendarDates.get(date).name);
-            }
-        }
-         */
     }
 
     public LocalDate moveCalendarItemBackwards(Work workToMove, LocalDate date, LocalDate lastDateMovedTo) {
@@ -98,8 +72,11 @@ public class CalendarV2 {
             //System.out.println("oldDate: " + dateToMove);
             //System.out.println("newDate: " + dateToMoveTo);
             dateToMoveTo = dateToMoveTo.minusDays(1L);
-            if(!calendarDates.containsKey(dateToMoveTo)) freeSpot = dateToMoveTo;
-
+            if (!calendarDates.containsKey(dateToMoveTo)) {
+                if (dateToMoveTo.getDayOfWeek() != DayOfWeek.SATURDAY && dateToMoveTo.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    freeSpot = dateToMoveTo;
+                }
+            }
         }
         dateToMoveTo = dateToMoveTo.plusDays(1L);
         //System.out.println(date + "->" + dateToMoveTo);

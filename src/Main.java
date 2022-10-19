@@ -7,7 +7,7 @@ public class Main {
 
         Work windows = new Work("Fönster", LocalDate.of(2022, 5, 10), 10);
         Work door = new Work("Dörr", LocalDate.of(2022, 5, 15), 5);
-        Work fence = new Work("Staket", LocalDate.of(2022, 5, 22), 2);
+        Work fence = new Work("Staket", LocalDate.of(2022, 5, 23), 2);
         Work roof = new Work("Tak", LocalDate.of(2022, 5, 17), 6);
 
         calendar.addWork(windows)
@@ -43,10 +43,16 @@ public class Main {
     }
 
     private static void printCalendarV2(CalendarV2 calendar) {
+        calendar.calendarDates.keySet().stream().sorted().forEach(key -> {
+            System.out.print(key + " : " + key.getDayOfWeek() + " : ");
+            System.out.println(calendar.calendarDates.get(key).name + ", " + calendar.calendarDates.get(key).StartDate + ", " + calendar.calendarDates.get(key).days);
+        });
+        /*
         for (Map.Entry<LocalDate, Work> entry : calendar.calendarDates.entrySet()) {
             System.out.print(entry.getKey() + " : ");
             System.out.println(entry.getValue().name + ", " + entry.getValue().StartDate + ", " + entry.getValue().days);
         }
+         */
     }
 
 
