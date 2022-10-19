@@ -1,8 +1,6 @@
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CalendarV2 {
     LocalDate[] vacationDays = new LocalDate[20];
@@ -59,6 +57,19 @@ public class CalendarV2 {
         }
          */
 
+        LocalDate[] lastDateMovedTo = {LocalDate.MIN};
+        calendarDates.keySet().stream().sorted().forEach(date -> {
+            if (date.isAfter(work.StartDate)) {
+                lastDateMovedTo[0] = moveCalendarItemBackwards(calendarDates.get(date), date, lastDateMovedTo[0]);
+                //System.out.println(lastDateMovedTo[0]);
+            }
+        });
+
+        //for (LocalDate key : keys) System.out.println(key);
+
+        System.out.println();
+
+        /*
         for (int i = 0; i < calendarDates.size(); i++) {
             LocalDate date = startDateOfRemoved.plusDays(i);
             if (calendarDates.containsKey(date)) {
@@ -67,25 +78,40 @@ public class CalendarV2 {
                 //if (calendarDates.containsKey(date)) System.out.println(date + ": " + calendarDates.get(date).name);
             }
         }
-
+         */
     }
 
-    public void moveCalendarItemBackwards(LocalDate date) {
-        LocalDate dateToMove = date;
-        LocalDate newDate = date.minusDays(Long.parseLong("1"));
+    public LocalDate moveCalendarItemBackwards(Work workToMove, LocalDate date, LocalDate lastDateMovedTo) {
+        LocalDate dateToMoveTo = date.minusDays(Long.parseLong("1"));
+        LocalDate freeSpot = date;
 
-        while (!calendarDates.containsKey(newDate)) {
+        //As long as
+        while (true) {
+            //if (calendarDates.containsKey(dateToMoveTo)) break;
+            if (!dateToMoveTo.isAfter(lastDateMovedTo))
+                break; //Stop if we're past the last date that a work item was moved to.
+            if (workToMove.StartDate.isAfter(dateToMoveTo)) break; //Stop if start date of work being moved is reached.
+            if (calendarDates.get(dateToMoveTo) == workToMove)
+                break; //Stop if the work being moved is the same as the one for which the date is being checked.
+            if (LocalDate.now().isEqual(date)) break; //Stop if reached today's date.
 
-            /*
-            System.out.println("oldDate: " + dateToMove);
-            System.out.println("newDate: " + newDate);
-             */
-            calendarDates.put(newDate, calendarDates.get(dateToMove));
-            calendarDates.remove(dateToMove);
+            //System.out.println("oldDate: " + dateToMove);
+            //System.out.println("newDate: " + dateToMoveTo);
+            dateToMoveTo = dateToMoveTo.minusDays(1L);
+            if(!calendarDates.containsKey(dateToMoveTo)) freeSpot = dateToMoveTo;
 
-            dateToMove = newDate;
-            newDate = newDate.minusDays(Long.parseLong("1"));
         }
+        dateToMoveTo = dateToMoveTo.plusDays(1L);
+        //System.out.println(date + "->" + dateToMoveTo);
+
+        if (!calendarDates.containsKey(freeSpot)) {
+            calendarDates.put(freeSpot, workToMove);
+            calendarDates.remove(date);
+            //System.out.println("boop" + dateToMoveTo);
+            return freeSpot;
+        }
+
+        return lastDateMovedTo;
     }
 }
 

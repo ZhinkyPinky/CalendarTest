@@ -7,16 +7,20 @@ public class Main {
 
         Work windows = new Work("Fönster", LocalDate.of(2022, 5, 10), 10);
         Work door = new Work("Dörr", LocalDate.of(2022, 5, 15), 5);
-        Work fence = new Work("Staket", LocalDate.of(2022, 5, 21), 2);
-        Work roof = new Work("Tak", LocalDate.of(2022, 5, 22), 2);
+        Work fence = new Work("Staket", LocalDate.of(2022, 5, 22), 2);
+        Work roof = new Work("Tak", LocalDate.of(2022, 5, 17), 6);
 
         calendar.addWork(windows)
-                .addWork(door);
+                .addWork(roof)
+                .addWork(door)
+                .addWork(fence);
 
         printCalendarV2(calendar);
         System.out.println();
 
         calendar.removeWork(door);
+        printCalendarV2(calendar);
+        calendar.removeWork(roof);
 
         int year = LocalDate.now().getYear();
         int month = 0;
